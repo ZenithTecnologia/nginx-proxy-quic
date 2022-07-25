@@ -349,10 +349,10 @@ server {
 	{{ if $server_tokens }}
 	server_tokens {{ $server_tokens }};
 	{{ end }}
-	listen {{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen {{ $external_https_port }} http3 {{ $default_server }};
 	listen {{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen [::]:{{ $external_https_port }} http3 {{ $default_server }};
 	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ end }}
 	{{ $access_log }}
