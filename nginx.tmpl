@@ -238,8 +238,10 @@ server {
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	server_tokens off;
+	listen {{ $external_https_port }} http3 reuseport;
 	listen {{ $external_https_port }} ssl http2 http3;
 	{{ if $enable_ipv6 }}
+	listen [::]:{{ $external_https_port }} http3 reuseport;
 	listen [::]:{{ $external_https_port }} ssl http2 http3;
 	{{ end }}
 	{{ $access_log }}
@@ -347,9 +349,11 @@ server {
 	{{ if $server_tokens }}
 	server_tokens {{ $server_tokens }};
 	{{ end }}
-	listen {{ $external_https_port }} ssl http2 http3 {{ $default_server }};
+	listen {{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen {{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} ssl http2 http3 {{ $default_server }};
+	listen [::]:{{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ end }}
 	{{ $access_log }}
 
@@ -467,9 +471,11 @@ server {
 	{{ if $server_tokens }}
 	server_tokens {{ $server_tokens }};
 	{{ end }}
-	listen {{ $external_https_port }} ssl http2 http3 {{ $default_server }};
+	listen {{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen {{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} ssl http2 http3 {{ $default_server }};
+	listen [::]:{{ $external_https_port }} http3 reuseport {{ $default_server }};
+	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
 	{{ end }}
 	{{ $access_log }}
 	return 500;
