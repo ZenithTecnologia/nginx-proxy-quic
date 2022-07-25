@@ -238,9 +238,9 @@ server {
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	server_tokens off;
-	listen {{ $external_https_port }} ssl http2;
+	listen {{ $external_https_port }} ssl http2 http3;
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} ssl http2;
+	listen [::]:{{ $external_https_port }} ssl http2 http3;
 	{{ end }}
 	{{ $access_log }}
 	return 503;
@@ -347,9 +347,9 @@ server {
 	{{ if $server_tokens }}
 	server_tokens {{ $server_tokens }};
 	{{ end }}
-	listen {{ $external_https_port }} ssl http2 {{ $default_server }};
+	listen {{ $external_https_port }} ssl http2 http3 {{ $default_server }};
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
+	listen [::]:{{ $external_https_port }} ssl http2 http3 {{ $default_server }};
 	{{ end }}
 	{{ $access_log }}
 
@@ -361,6 +361,10 @@ server {
 
 	ssl_certificate /etc/nginx/certs/{{ (printf "%s.crt" $cert) }};
 	ssl_certificate_key /etc/nginx/certs/{{ (printf "%s.key" $cert) }};
+
+	add_header alt-svc 'h3-27=":443"; ma=86400, h3-28=":443"; ma=86400, h3-29=":443"; ma=86400';
+
+        add_header QUIC-Status $http3;
 
 	{{ if (exists (printf "/etc/nginx/certs/%s.dhparam.pem" $cert)) }}
 	ssl_dhparam {{ printf "/etc/nginx/certs/%s.dhparam.pem" $cert }};
@@ -463,9 +467,9 @@ server {
 	{{ if $server_tokens }}
 	server_tokens {{ $server_tokens }};
 	{{ end }}
-	listen {{ $external_https_port }} ssl http2 {{ $default_server }};
+	listen {{ $external_https_port }} ssl http2 http3 {{ $default_server }};
 	{{ if $enable_ipv6 }}
-	listen [::]:{{ $external_https_port }} ssl http2 {{ $default_server }};
+	listen [::]:{{ $external_https_port }} ssl http2 http3 {{ $default_server }};
 	{{ end }}
 	{{ $access_log }}
 	return 500;
